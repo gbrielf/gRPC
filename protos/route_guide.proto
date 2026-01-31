@@ -15,18 +15,11 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.examples.routeguide";
-option java_outer_classname = "RouteGuideProto";
-option objc_class_prefix = "RTG";
+option java_package = "io.grpc.examples.weather";
+option java_outer_classname = "WeatherMonitoringProto";
+option objc_class_prefix = "WTH";
 
-package routeguide;
-
-// Interface exported by the server.
-service RouteGuide {
-  /////////////////////////////////////////////////////////////////////////////
-  // Codelab Hint: Define RPC methods here
-  /////////////////////////////////////////////////////////////////////////////
-}
+package weather;
 
 // Points are represented as latitude-longitude pairs.
 message Point{
@@ -34,17 +27,32 @@ message Point{
   int32 longitude = 2;
 }
 
-message Feature {
-  // O nome ou endereço da feature
-  string name = 1;
-
-  // O ponto onde  a feature está localizada
-  Point location = 2;
+message WeatherData {
+  Point location = 1;
+  float temperature = 2;      // Temperatura em Celsius
+  float humidity = 3;         // Umidade em %
+  string condition = 4;       // "Sunny", "Rainy", "Cloudy", etc.
+  float wind_speed = 5;       // Velocidade do vento em km/h
+  int64 timestamp = 6;        // Unix timestamp
 }
 
 service WeatherMonitoring {
   // A definição do serviço
 
-  // Obtem a feature para o ponto fornecido
-  rpc GetFeature(Point) returns (Feature){}
+  // Obtem a feature para o ponto fornecido (unary RPC)
+  rpc GetFeature(Point) returns (WeatherData){}
+
+  // Recebe atualizações contínuas de clima para uma localização (Server Streaming)
+  rpc StreamWeather(Point) returns (stream WeatherData){}]
+
+  // Cliente envia múltiplas localizações e recebo resumo (Client Streaming)
+  rpc MonitorWeather(stream Point) return (stream WeatherData){}
+}
+
+// Resumo de múltiplas localizações
+message WeatherSummary{
+  int32 location_count = 1;
+  float avg_temperature = 2;
+  float avg_humidity = 3;
+  string most_commom_condition = 4;
 }
