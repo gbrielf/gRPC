@@ -29,17 +29,22 @@ service RouteGuide {
 }
 
 // Points are represented as latitude-longitude pairs.
-message Point {
-  /////////////////////////////////////////////////////////////////////////////
-  // Codelab Hint: Define the Point messages here
-  /////////////////////////////////////////////////////////////////////////////
+message Point{
+  int32 latitude = 1;
+  int32 longitude = 2;
 }
 
-// A feature names something at a given point.
-//
-// If a feature could not be named, the name is empty.
 message Feature {
-  /////////////////////////////////////////////////////////////////////////////
-  // Codelab Hint: Define the Feature messages here
-  /////////////////////////////////////////////////////////////////////////////
+  // O nome ou endereço da feature
+  string name = 1;
+
+  // O ponto onde  a feature está localizada
+  Point location = 2;
+}
+
+service WeatherMonitoring {
+  // A definição do serviço
+
+  // Obtem a feature para o ponto fornecido
+  rpc GetFeature(Point) returns (Feature){}
 }
